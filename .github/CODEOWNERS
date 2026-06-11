@@ -1,0 +1,21 @@
+# 代碼所有者與審核策略
+
+# 規則庫變動必須由核心團隊審核
+rules/* @pppeee861005
+
+# 工作流變動由核心開發團隊審核
+workflows/* @pppeee861005
+
+# 評測報告變動由評測協調員審核
+eval/reports/* @pppeee861005
+
+# 文檔變動相對寬鬆（鼓勵社群貢獻）
+docs/* @pppeee861005
+
+# README 和 License 變動由核心團隊審核
+README.md @pppeee861005
+LICENSE @pppeee861005
+CONTRIBUTING.md @pppeee861005
+
+# GitHub 配置由核心團隊管理
+.github/* @pppeee861005
