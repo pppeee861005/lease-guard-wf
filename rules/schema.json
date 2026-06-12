@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "租約哨兵 - 規則庫條文 Schema",
+  "description": "住宅租賃定型化契約應記載及不得記載事項的結構化格式定義 | 版本 1.0 | 生效日期 2026-06-12",
+  "type": "object",
+  "required": ["id", "type", "original", "plain", "violations", "severity", "source_ver"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "條目編號，沿用官方編號，不自創（如：'6'、'18'、'不得1'）",
+      "example": "6"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["應記載", "不得記載"],
+      "description": "條文類型：應記載事項 或 不得記載事項"
+    },
+    "original": {
+      "type": "string",
+      "description": "官方原文，必須逐字抄錄，零改動。來源：內政部114年4月18日公告（台內地字第1140113583號）",
+      "example": "租賃期間相關費用之約定(三)電費：□由出租人負擔。□由承租人負擔。□以用電度數計費者，每度電費不得超過該租賃標的電費單『當期每度平均電價』..."
+    },
+    "plain": {
+      "type": "string",
+      "description": "白話版解釋：給19歲首次租屋者看得懂的版本。禁止法律用語，必須用日常語言。長度：1-3句話。標記：『AI起草，待驗收』（驗收後移除）",
+      "example": "房東如果向承租人收電費，價格不能超過台灣電力公司當月的平均電價。絕對不能按『最高級距』來超收。如果房東不提供電費單據，承租人有權向台電直接查詢。"
+    },
+    "violations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "description": "常見違規樣態陣列。每個樣態由『模式描述』和『真實例句』組成。格式：『模式描述（真實例句）』",
+      "items": {
+        "type": "object",
+        "required": ["pattern", "example"],
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "違規模式的簡潔描述（8-20字）",
+            "example": "房東按『最高級距』計費而非平均電價"
+          },
+          "example": {
+            "type": "string",
+            "description": "來自真實案例或合理推演的例句（引號內是真實語句或虛構但合理的例句）",
+            "example": "「您用400度，我按每度3.68元計費（最高級距），共1,472元」但台電實際費用只要1,247.6元"
+          },
+          "severity_flag": {
+            "type": "string",
+            "enum": ["高", "中", "低"],
+            "description": "此違規樣態通常對應的嚴重度等級（只供參考，最終由severity字段決定）"
+          }
+        }
+      },
+      "example": [
+        {
+          "pattern": "房東按『最高級距』計費",
+          "example": "「您用400度，我按每度3.68元計費（最高級距），共1,472元」但台電實際費用只要1,247.6元",
+          "severity_flag": "高"
+        },
+        {
+          "pattern": "房東不提供電費單據",
+          "example": "「電費就是收$1,500，不用看單子」，承租人無法驗證",
+          "severity_flag": "高"
+        },
+        {
+          "pattern": "房東將公共設施電費額外計收",
+          "example": "「基本$1,500 + 樓梯燈費$100」，但新法禁止額外收取",
+          "severity_flag": "中"
+        }
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["高", "中", "低"],
+      "description": "此條文的違反嚴重度級別。判斷標準：【高】年損失≥$12,000/年 或 不得記載項 或 難救濟 或 居住權威脅；【中】年損失$3,600-12,000/年 且可救濟；【低】年損失<$3,600/年 或程序瑕疵。詳細標準見『severity_分級標準_v1.0.md』。標記：『待驗收』（驗收後移除）",
+      "example": "高"
+    },
+    "source_ver": {
+      "type": "string",
+      "description": "規則庫版本號，即官方最新修正日期（格式：『114年4月18日』或『2025-04-18』均可，但全部文件必須統一格式）",
+      "example": "114年4月18日"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["待驗收", "已驗收", "有爭議"],
+      "description": "驗收狀態。初始值：『待驗收』。驗收通過後改為『已驗收』。有邊界爭議則記為『有爭議』並登記到disputes.md",
+      "default": "待驗收"
+    },
+    "verification_notes": {
+      "type": "string",
+      "description": "驗收人的備註欄位（optional）。記錄：修改建議、邊界判例、爭議點等。驗收時填寫。",
+      "example": "plain欄改為『房東最多按平均電價收費，不能按級距』；violations第2項修改為『主動拒絕提供…』"
+    }
+  }
+}
